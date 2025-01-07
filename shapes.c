@@ -134,13 +134,21 @@ void AID_DrawRays(SDL_Surface *surface, AID_Ray rays[RAY_COUNT], AID_Objects *ob
         double x_path = rays[i].x;
         double y_path = rays[i].y;
         int screen_end = 0;
+        int collided = 0;
         while (!screen_end)
         {
             AID_PutPixel(surface, x_path, y_path, color);
             x_path += rays[i].normal_x;
             y_path += rays[i].normal_y;
             if (AID_CheckCollisions(objects, x_path, y_path))
-                color = 0x624E88;
+            {
+                collided = 1;
+                color = 0xFFFFFFFF;
+            }
+            else if (collided)
+            {
+                color = 0x5355A1;
+            }
             if (x_path < 0 || x_path >= WIDTH || y_path < 0 || y_path >= HEIGHT)
                 screen_end = 1;
         }
