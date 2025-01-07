@@ -4,7 +4,7 @@ SRCS = collisions.c main.c shapes.c
 
 CFLAGS = -Wall -Wextra -Werror -lSDL2 -lm
 
-OBJS=$(SRC:.c=.o)
+OBJS=$(SRCS:.c=.o)
 
 all: $(NAME)
 

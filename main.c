@@ -10,11 +10,20 @@ int main()
 
     AID_Objects *objects = NULL;
 
-    AID_Circle circle = {100, 100, 20};
+    AID_Circle light = {100, 100, 20};
     
-    AID_AddObject(&objects, CIRCLE, &circle);
+    AID_Circle circle = {WIDTH / 2, HEIGHT / 2, 50};
 
-    AID_Line line = {100, 100, 200, 500, 2.0};
+    AID_Circle smallCircle = {700, 700, 20};
+
+    AID_Rect rect = {300, 300, 100, 100};
+
+    AID_Line line = {600, 100, 900, 700, 2.0};
+
+    AID_AddObject(&objects, LINE, &line);
+    AID_AddObject(&objects, CIRCLE, &smallCircle);
+    AID_AddObject(&objects, RECT, &rect);
+    AID_AddObject(&objects, CIRCLE, &circle);
 
     AID_Ray rays[RAY_COUNT];
 
@@ -22,9 +31,9 @@ int main()
 
     SDL_Event event;
 
-    unsigned char running = 1;
+    AID_InitRays(surface, rays, &light);
 
-    AID_InitRays(surface, rays, &circle);
+    unsigned char running = 1;
 
     while (running)
     {
@@ -34,15 +43,15 @@ int main()
                 running = 0;
             if (event.type == SDL_MOUSEMOTION && event.motion.state != 0)
             {
-                circle.x = event.motion.x;
-                circle.y = event.motion.y;
-                AID_InitRays(surface, rays, &circle);
+                light.x = event.motion.x;
+                light.y = event.motion.y;
+                AID_InitRays(surface, rays, &light);
             }
         }
-        AID_FillRect(surface, &background, 0x00000000);
-        AID_FillCircle(surface, &circle, 0xFFFFFFFF, 1.0);
+        AID_FillRect(surface, &background, 0x11111111);
+        AID_FillObjects(surface, objects);
+        AID_DrawRays(surface, rays, objects);
         SDL_UpdateWindowSurface(window);
-        AID_DrawRays(surface, rays);
         SDL_Delay(10);
     }
     printf("Exiting...\n");

@@ -5,15 +5,11 @@ void AID_FillRect(SDL_Surface *surface, AID_Rect *rect, uint32_t color)
     if (SDL_MUSTLOCK(surface))
         SDL_LockSurface(surface);
 
-    for (uint16_t x = rect->x; x < rect->w; x++)
+    for (int16_t x = rect->x; x < rect->x + rect->w; x++)
     {
-        for (uint16_t y = rect->y; y < rect->h; y++)
+        for (int16_t y = rect->y; y < rect->y + rect->h; y++)
         {
-            if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
-            {
-                uint32_t *pixel = (uint32_t *)((uint8_t *)surface->pixels + y * surface->pitch + x * 4);
-                *pixel = color;
-            }
+            AID_PutPixel(surface, x, y, color);
         }
     }
 
@@ -117,7 +113,7 @@ void AID_InitRays(SDL_Surface *surface, AID_Ray rays[RAY_COUNT], AID_Circle *cir
 
     for (int i = 0; i < RAY_COUNT; i++)
     {
-        double angle = (2 * PI / RAY_COUNT) * i;
+        double angle = (2 * M_PI / RAY_COUNT) * i;
 
         AID_Ray ray = {circle->x, circle->y, (double)cos(angle), (double)sin(angle)};
         rays[i] = ray;
@@ -127,26 +123,26 @@ void AID_InitRays(SDL_Surface *surface, AID_Ray rays[RAY_COUNT], AID_Circle *cir
         SDL_UnlockSurface(surface);
 }
 
-void AID_DrawRays(SDL_Surface *surface, AID_Ray rays[RAY_COUNT])
+void AID_DrawRays(SDL_Surface *surface, AID_Ray rays[RAY_COUNT], AID_Objects *objects)
 {
     if (SDL_MUSTLOCK(surface))
         SDL_LockSurface(surface);
 
     for (int i = 0; i < RAY_COUNT; i++)
     {
-        AID_Ray ray = rays[i];
-        double x_path = ray.x;
-        double y_path = ray.y;
+        uint32_t color = 0x8967B3;
+        double x_path = rays[i].x;
+        double y_path = rays[i].y;
         int screen_end = 0;
-
         while (!screen_end)
         {
+            AID_PutPixel(surface, x_path, y_path, color);
+            x_path += rays[i].normal_x;
+            y_path += rays[i].normal_y;
+            if (AID_CheckCollisions(objects, x_path, y_path))
+                color = 0x624E88;
             if (x_path < 0 || x_path >= WIDTH || y_path < 0 || y_path >= HEIGHT)
                 screen_end = 1;
-            else
-                AID_PutPixel(surface, x_path, y_path, 0xf1f1f1ff);
-            x_path += ray.normal_x;
-            y_path += ray.normal_y;
         }
     }
 
