@@ -147,7 +147,7 @@ void AID_DrawRays(SDL_Surface *surface, AID_Ray rays[RAY_COUNT], AID_Objects *ob
             }
             else if (collided)
             {
-                color = 0x5355A1;
+                color = 0x01010101;
             }
             if (x_path < 0 || x_path >= WIDTH || y_path < 0 || y_path >= HEIGHT)
                 screen_end = 1;
