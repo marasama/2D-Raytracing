@@ -1,4 +1,4 @@
-#2D Raytracing
+# 2D Raytracing
 
 ![Example 1](./example1.png)
 
